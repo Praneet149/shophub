@@ -9,6 +9,7 @@ const corsHeaders = {
 interface ChatRequest {
   message: string;
   conversationHistory: Array<{ role: string; content: string }>;
+  apiKey: string;
 }
 
 interface ChatResponse {
@@ -25,14 +26,13 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { message, conversationHistory }: ChatRequest = await req.json();
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    const { message, conversationHistory, apiKey }: ChatRequest = await req.json();
 
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "API key not configured" }),
+        JSON.stringify({ error: "API key is required" }),
         {
-          status: 500,
+          status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );

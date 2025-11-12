@@ -80,6 +80,7 @@ export default function HubBot({ isOpen, onClose, sessionId }: HubBotProps) {
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
       const response = await fetch(
         `${supabaseUrl}/functions/v1/gemini-chat`,
@@ -92,6 +93,7 @@ export default function HubBot({ isOpen, onClose, sessionId }: HubBotProps) {
           body: JSON.stringify({
             message: userMessage,
             conversationHistory,
+            apiKey: geminiApiKey,
           }),
         }
       );
