@@ -7,6 +7,8 @@ import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 import Checkout, { OrderData } from './components/Checkout';
 import OrderSuccess from './components/OrderSuccess';
+import HubBot from './components/HubBot';
+import { MessageCircle } from 'lucide-react';
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,6 +21,7 @@ function App() {
   const [isOrderSuccessOpen, setIsOrderSuccessOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [orderNumber, setOrderNumber] = useState('');
+  const [isHubBotOpen, setIsHubBotOpen] = useState(false);
   const [sessionId] = useState(() => {
     const existing = localStorage.getItem('sessionId');
     if (existing) return existing;
@@ -264,6 +267,19 @@ function App() {
         onClose={() => setIsOrderSuccessOpen(false)}
         orderNumber={orderNumber}
       />
+
+      <HubBot
+        isOpen={isHubBotOpen}
+        onClose={() => setIsHubBotOpen(false)}
+        sessionId={sessionId}
+      />
+
+      <button
+        onClick={() => setIsHubBotOpen(!isHubBotOpen)}
+        className="fixed bottom-6 right-6 z-40 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all hover:shadow-xl"
+      >
+        <MessageCircle className="h-6 w-6" />
+      </button>
     </div>
   );
 }
