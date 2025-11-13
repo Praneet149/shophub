@@ -57,6 +57,8 @@ Be friendly, concise, and helpful. When relevant, suggest products or features. 
       },
     ];
 
+    console.log("Sending request to Gemini with", contents.length, "messages");
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
@@ -82,8 +84,13 @@ Be friendly, concise, and helpful. When relevant, suggest products or features. 
     if (!response.ok) {
       const error = await response.text();
       console.error("Gemini API error:", error);
+      console.error("Gemini API status:", response.status);
       return new Response(
-        JSON.stringify({ error: "Failed to get response from AI" }),
+        JSON.stringify({
+          error: "Failed to get response from AI",
+          details: error,
+          status: response.status
+        }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -92,8 +99,21 @@ Be friendly, concise, and helpful. When relevant, suggest products or features. 
     }
 
     const data = await response.json();
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated";
+    if (!data.candidates || !data.candidates[0]) {
+      console.error("Invalid Gemini response:", data);
+      return new Response(
+        JSON.stringify({
+          error: "Invalid response from AI",
+          details: data
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const reply = data.candidates[0].content?.parts?.[0]?.text || "No response generated";
 
     return new Response(JSON.stringify({ reply }), {
       headers: {
@@ -104,7 +124,7 @@ Be friendly, concise, and helpful. When relevant, suggest products or features. 
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ error: "Internal server error", details: String(error) }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

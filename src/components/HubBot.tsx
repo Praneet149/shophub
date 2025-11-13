@@ -99,10 +99,16 @@ export default function HubBot({ isOpen, onClose, sessionId }: HubBotProps) {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to get response from Hub Bot');
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(`Failed to get response: ${errorData.details || 'Unknown error'}`);
       }
 
       const data = await response.json();
+      if (!data.reply) {
+        console.error('No reply in response:', data);
+        throw new Error('No response text from AI');
+      }
       const botReply = data.reply;
 
       const { data: savedBotMessage, error: botError } = await supabase
