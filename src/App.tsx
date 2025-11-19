@@ -8,6 +8,7 @@ import Cart from './components/Cart';
 import Checkout, { OrderData } from './components/Checkout';
 import OrderSuccess from './components/OrderSuccess';
 import HubBot from './components/HubBot';
+import Footer from './components/Footer';
 import { MessageCircle } from 'lucide-react';
 
 function App() {
@@ -280,6 +281,8 @@ function App() {
       >
         <MessageCircle className="h-6 w-6" />
       </button>
+
+      <Footer />
     </div>
   );
 }
